@@ -106,7 +106,6 @@ public class SongCollectionController {
         return "redirect:/songCollection/"+update(id, songCollection).getId();
     }
     // Update form
-    // TODO Url isn't good CKECK
     @RequestMapping(value = "/{id}/form", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView updateForm(@PathVariable("id") Long id) {
         logger.info("Generating form for updating Song Collection number {}", id);

@@ -12,11 +12,7 @@
 <br>
 <br>
 <br>
-<div align="center">
-    <a type="button" class="btn btn-default" href="/songCollection/${map.idCollection}"> View Songs</a>
-    <a type="button" class="btn btn-primary" href="/songCollection/${map.idCollection}/songs/form"> Try Again</a>
 
-</div>
 
 <c:if test="${not empty map.searchList}">
 
@@ -25,7 +21,7 @@
                 Band Name
             </th>
             <th>
-                Song name
+                Album
             </th>
             <th>
                 Date
@@ -48,7 +44,7 @@
 
 
                             <input type="hidden" name="name" value="${map.song}"/>
-                            <td><input type="submit" class="btn btn-success" value="add" /></td>
+                            <td><input type="submit" class="btn btn-sm btn-success" value="add" /></td>
                         </tr>
 
             </form>
@@ -58,8 +54,17 @@
 
 </c:if>
 <div align="center">
-<a type="button" class="btn btn-default" href="/songCollection/${map.idCollection}"> View Songs</a>
-<a type="button" class="btn btn-primary" href="/songCollection/${map.idCollection}/songs/form"> Try Again</a></body>
+    <table>
+        <tr>
+            <td>
+                <a type="button" class="btn btn-default" href="/songCollection/${map.idCollection}"> View Songs</a>
+            </td>
+            <td>
+                <a type="button" class="btn btn-primary" href="/songCollection/${map.idCollection}/songs/form"> Try Again</a>
+            </td>
+
+        </tr>
+    </table>
 </div>
 </div>
 

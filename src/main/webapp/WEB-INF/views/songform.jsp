@@ -37,12 +37,11 @@
                     <td><form:input path="band" value=""/></td>
                 </c:if>
             </tr>
->           </section>
+           </section>
         </table>
         <div align="center">
 
         </div>
     </form:form>
-    <%@include file="searchResult.jsp"%>
 </body>
 </html>

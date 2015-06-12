@@ -21,13 +21,12 @@ public class UserSongCollectionServiceImpl implements UserSongCollectionService 
     @Autowired
     UserRepository userRepository;
     @Transactional(readOnly = true)
-
     @Override
     public User getUserAndSongCollection(Long userId) {
         User user = userRepository.findOne(userId);
         return user;
     }
-
+    @Transactional(readOnly = true)
     @Override
     public SongCollection addSongCollectionToUser(SongCollection songCollection) {
         User user = userRepository.findUserByEmail(songCollection.getEmail());
@@ -41,7 +40,7 @@ public class UserSongCollectionServiceImpl implements UserSongCollectionService 
         userRepository.save(user);
         return songCollection;
     }
-
+    @Transactional(readOnly = true)
     @Override
     public SongCollection updateSongCollectionFromUser(SongCollection songCollection, Long songcollectionId) {
         SongCollection oldSongCollection = songCollectionRepository.findOne(songcollectionId);
@@ -52,7 +51,7 @@ public class UserSongCollectionServiceImpl implements UserSongCollectionService 
         }
         return songCollectionRepository.save(songCollection);
     }
-
+    @Transactional(readOnly = true)
     @Override
     public void removeSongCollectionFromUser(Long songColllectionId) {
 

@@ -13,26 +13,29 @@
 
 
         <c:if test="${not empty map.songs}">
-            <h2> Songs </h2>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                        <h2> Songs </h2>
+                    </div>
+                <div class="panel-body">
         <table class="table table-striped">
          <tr>
              <th>
-                 Band
-
-             </th>
-             <th>
                  Name
+
              </th>
              <th></th>
              <th></th>
-
+             <th></th>
          </tr>
             <c:forEach var="song" items="${map.songs}">
                 <tr>
-                    <td> ${fn:escapeXml(song.getBand())} </td>
-                    <td><a href="/songCollection/${map.idCollection}/songs/${song.getId()}"> ${fn:escapeXml(song.getName())}</a>: </td>
-                    <td><a  type="button" class="btn btn-primary" href="/songCollection/${map.idCollection}/songs/${song.getId()}/form">Edit Song</a> </td>
-                    <td><button id="delete" value="${song.getId()}" class="btn btn-danger">Delete</button> </td>
+
+
+                    <td><a href="/songCollection/${map.idCollection}/songs/${song.getId()}"> ${fn:escapeXml(song.getName())}</a> </td>
+                    <td><a  type="button" class="btn btn-sm btn-info" href="/songCollection/${map.idCollection}/songs/${song.getId()}"> + info</a> </td>
+                    <td><a  type="button" class="btn btn-sm btn-primary" href="/songCollection/${map.idCollection}/songs/${song.getId()}/form">Edit Song</a> </td>
+                    <td><button id="delete" value="${song.getId()}" class="btn btn-sm btn-danger">Delete</button> </td>
                 </tr>
             </c:forEach>
         </c:if>
@@ -40,7 +43,7 @@
     </table>
      <br>
             <div style="text-align: center" >
-        <a type="button" class="btn btn-primary"  href="/songCollection/${map.idCollection}/songs/form">Search Song</a>
+        <a type="button" class="btn btn-sm btn-primary"  href="/songCollection/${map.idCollection}/songs/form">Search Song</a>
                 </div>
 
             <script>
@@ -55,7 +58,8 @@
                     });
                 });
             </script>
-
+            </div>
+        </div>
 
 </div>
 

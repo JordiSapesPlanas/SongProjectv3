@@ -25,20 +25,20 @@ public class SongCollection {
     @NotBlank(message = "not blank")
     @Size(max = 256)
     private String name;
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true) //Eagl
     private List<Song> songs = new ArrayList<Song>();
 
     public SongCollection(String email, String name) {
         this.email = email;
         this.name = name;
-        this.songs = new ArrayList<>();
+        //this.songs = new ArrayList<>();
     }
 
     
     public SongCollection(){
         this.email = null;
         this.name = null;
-        this.songs = new ArrayList<>();
+        //this.songs = new ArrayList<>();
     }
     public String getEmail() {
         return email;

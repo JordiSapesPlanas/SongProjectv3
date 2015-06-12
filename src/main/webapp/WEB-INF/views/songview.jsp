@@ -13,9 +13,32 @@
     <%@include file="bar.jsp" %>
     <br>
     <br>
-        <div align="center">
-            <h3> ${fn:escapeXml(map.song.getName())} is in your list now!</h3>
-            <p>${fn:escapeXml(map.song.getName())} - ${fn:escapeXml(map.song.getBand())}</p>
+        <div align="center" >
+
+            <ul class="list-group">
+                <li class="list-group-item active">
+                    <h3> ${fn:escapeXml(map.song.getName())}</h3>
+                </li>
+                <li class="list-group-item">
+                    Name: ${fn:escapeXml(map.song.getName())}
+                </li>
+                <li class="list-group-item">
+                    Band: ${fn:escapeXml(map.song.getBand())}
+                </li>
+                <li class="list-group-item">
+                    Country: ${fn:escapeXml(map.song.getReleaseCountry())}
+                </li>
+                <li class="list-group-item">
+                    Date: ${fn:escapeXml(map.song.getReleaseDate())}
+                </li>
+                <li class="list-group-item">
+                    Album: ${fn:escapeXml(map.song.getAlbum())}
+                </li>
+
+
+
+            </ul>
+
             <a class="btn btn-primary" href="/songCollection/${fn:escapeXml(map.idCollection)}">View your songs</a>
         </div>
     </body>

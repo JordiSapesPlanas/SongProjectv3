@@ -38,11 +38,25 @@ public class Song {
     public Song(String name, String band, String album, String releaseCountry, String releaseDate) {
         this.name = name;
         this.band = band;
+
         this.releaseCountry = releaseCountry;
         this.releaseDate = releaseDate;
         this.album = album;
 
     }
+
+    public void setReleaseCountry(String releaseCountry) {
+        this.releaseCountry = releaseCountry;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
 
     public Long getId() {
         return Id;

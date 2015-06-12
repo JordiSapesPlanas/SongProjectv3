@@ -72,9 +72,6 @@
             </section>
         </c:if>
     <br>
-    <div style="text-align: center" >
-        <button type="button" class="btn btn-primary" onclick="location.href='/songCollection/form'"> Create your List</button>
-    </div>
 
 
 

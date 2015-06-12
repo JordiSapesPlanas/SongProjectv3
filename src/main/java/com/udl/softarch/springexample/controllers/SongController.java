@@ -4,6 +4,7 @@ import com.udl.softarch.springexample.models.Song;
 import com.udl.softarch.springexample.models.SongCollection;
 import com.udl.softarch.springexample.repositories.SongCollectionRepository;
 import com.udl.softarch.springexample.repositories.SongRepository;
+import com.udl.softarch.springexample.services.SongCollectionSongService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,9 @@ import java.util.logging.Logger;
 @Controller
 @RequestMapping("/songCollection/{idCollection}/")
 public class SongController {
+
+    @Autowired
+    SongCollectionSongService songCollectionSongService;
 
     @Autowired
     SongRepository songRepository;
@@ -121,12 +125,10 @@ public class SongController {
                                @RequestParam(required = false, defaultValue = "10") int size,
                                @PathVariable("idCollection") Long id) {
         PageRequest request = new PageRequest(page, size);
-        SongCollection songCollection = songCollectionRepository.findOne(id);
-        ArrayList<Song> songs = (ArrayList<Song>) songCollection.getSongs();
-        System.out.print("hello");
-        return songs;
+        return songCollectionSongService.getSongsFromSongCollection(songCollectionRepository.findOne(id).getId());
 
-        //songRepository.findAll(request).getC.getContent();
+
+
     }
 
     @RequestMapping(value = "/songs", method = RequestMethod.GET, produces = "text/html")
@@ -134,9 +136,9 @@ public class SongController {
                                  @RequestParam(required = false, defaultValue = "10") int size,
                                  @PathVariable("idCollection") Long idCol) {
         Map<String, Object> model = new HashMap<>();
-        ArrayList<Song> songs = (ArrayList<Song>) list(page, size, idCol);
 
-        model.put("songs", songs);
+
+        model.put("songs", list(page, size, idCol));
         model.put("idCollection", idCol);
         return new ModelAndView("allsongs", "map", model);
     }
@@ -144,10 +146,12 @@ public class SongController {
     // obtener / retrieve
     @RequestMapping(value = "/songs/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Song retrieve(@PathVariable("id") Long id) {
-        System.out.println(4);
-        Preconditions.checkNotNull(songRepository.findOne(id), "Greeting with id %s not found", id);
-        return songRepository.findOne(id);
+    public Song retrieve(@PathVariable("id") Long id,
+                         @PathVariable("idCollection") Long idColl) {
+
+        Song s = songCollectionSongService.getSongFromSongCollection(id, idColl);
+        Preconditions.checkNotNull(s, "Greeting with id %s not found", id);
+        return s;
     }
 
     @RequestMapping(value = "/songs/{id}", method = RequestMethod.GET, produces = "text/html")
@@ -155,8 +159,8 @@ public class SongController {
                                      @PathVariable("idCollection") Long idCol) {
 
         Map<String, Object> model = new HashMap<>();
-        Song s = retrieve(id);
-        model.put("song", retrieve(id));
+        Song s = retrieve(id, idCol);
+        model.put("song", retrieve(id, idCol));
         model.put("idCollection", idCol);
         return new ModelAndView("songview", "map", model);
     }
@@ -165,11 +169,13 @@ public class SongController {
     @RequestMapping(value = "/songs", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public Song create(@Valid @RequestBody Song song, HttpServletResponse response) {
-        Song s = songRepository.save(song);
+    public Song create(@Valid @RequestBody Song song,
+                       @PathVariable("idCollection") Long idCol,
+                       HttpServletResponse response) {
+        //Song s = songRepository.save(song);
+        songCollectionSongService.addSongToSongCollection(song,idCol);
         System.out.println("produces data");
-
-        return s;
+        return song;
     }
 
     @RequestMapping(value = "/songs", method = RequestMethod.POST, consumes = "application/x-www-form-urlencoded", produces = "text/html")
@@ -177,11 +183,10 @@ public class SongController {
                              @PathVariable("idCollection") Long idCol) {
         System.out.println("produces html");
         if (binding.hasErrors()) {
-            System.out.println("meeeeu");
             return "redirect:/songCollection/" + idCol + "/songs/form";
         }
 
-        Long id = create(song, response).getId();
+        Long id = create(song, idCol,response).getId();
         return "redirect:/songCollection/" + idCol + "/songs/" + id;
 
         //return "heloo baby";
@@ -195,14 +200,16 @@ public class SongController {
     }
 
     // UPDATE
-    @RequestMapping(value = "/songs/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/songs/{id}/", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Song update(@PathVariable("id") Long id, @Valid @RequestBody Song song) {
-        Song oldSong = songRepository.findOne(id);
-        oldSong.setBand(song.getBand());
-        oldSong.setName(song.getName());
-        return songRepository.save(oldSong);
+    public Song update(@PathVariable("id") Long id,
+                       @Valid @RequestBody Song song,
+                       @PathVariable("idCollection") Long idCol) {
+        Song s = songRepository.findOne(id);
+        Song s1 = songCollectionSongService.updateSongFromSongCollection(song, s.getId(), idCol);
+        //Song s = songRepository.save(oldSong);
+        return s1;
     }
 
     @RequestMapping(value = "/songs/{id}", method = RequestMethod.PUT, consumes = "application/x-www-form-urlencoded")
@@ -211,10 +218,12 @@ public class SongController {
                              @Valid @ModelAttribute("song") Song song,
                              @PathVariable("idCollection") Long idCol,
                              BindingResult binding) {
+
         if (binding.hasErrors()) {
             return "redirect:/songCollection/" + idCol + "/songs/" + id + "/form";
         }
-        return "redirect:/songCollection/" + idCol + "/songs/" + update(id, song).getId();
+        Song s = update(id, song, idCol);
+        return "redirect:/songCollection/" + idCol + "/songs/" + s.getId().toString();
     }
 
     // Update form
@@ -222,7 +231,7 @@ public class SongController {
     public ModelAndView updateForm(@PathVariable("id") Long id, @PathVariable("idCollection") Long idCol) {
         Map<String, Object> model = new HashMap<>();
 
-        model.put("song", songRepository.findOne(id));
+        model.put("song", songCollectionSongService.getSongFromSongCollection(id, idCol));
         model.put("idCollection", idCol);
 
         return new ModelAndView("PutSongForm", "map", model);
@@ -231,14 +240,15 @@ public class SongController {
     // DELETE
     @RequestMapping(value = "/songs/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable("id") Long id) {
-        songRepository.delete(songRepository.findOne(id));
+    public void delete(@PathVariable("id") Long id, @PathVariable("idCollection") Long idCol) {
+        songCollectionSongService.deleteSongFromSongCollection(id, idCol);
+        //songRepository.delete(songRepository.findOne(id));
     }
 
     @RequestMapping(value = "/songs/{id}", method = RequestMethod.DELETE, produces = "text/html")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteHTML(@PathVariable("id") Long id) {
-        delete(id);
+    public String deleteHTML(@PathVariable("id") Long id, @PathVariable("idCollection") Long idCol) {
+        delete(id, idCol);
         return "redirect:/songCollection/{id}/songs";
     }
 
@@ -277,14 +287,14 @@ public class SongController {
 
             @Override
             public String toString() {
-                return "heeeeeeeakabsdkjabfkajdbf: "+band+"\n"+"Artist: "+album+"\n"+"Countries: "+releaseCountry+"\n"+"Year: "+releaseDate+"\n";
+                return band+"\n"+"Artist: "+album+"\n"+"Countries: "+releaseCountry+"\n"+"Year: "+releaseDate+"\n";
             }
         }
 
         XQueryHelper(String xquery, URL url)
                 throws ClassNotFoundException, InstantiationException, IllegalAccessException, XQException, IOException, JAXBException {
             URLConnection urlconn = url.openConnection();
-            urlconn.setReadTimeout(50000);
+            urlconn.setReadTimeout(5000);
 
             XQDataSource xqds = (XQDataSource) Class.forName("net.sf.saxon.xqj.SaxonXQDataSource").newInstance();
             this.conn = xqds.getConnection();

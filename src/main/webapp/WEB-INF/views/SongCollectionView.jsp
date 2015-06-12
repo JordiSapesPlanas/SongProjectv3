@@ -18,8 +18,8 @@
 <%@include file="bar.jsp" %>
 
     <c:if test="${not empty SongCollection}">
-        <h1>${fn:escapeXml(SongCollection.getName())} list</h1>
 
+        <%--<h1>${fn:escapeXml(SongCollection.getName())} list</h1></div> --%>
 
 
     </c:if>
